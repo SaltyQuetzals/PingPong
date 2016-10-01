@@ -1,4 +1,6 @@
-var UserSchema = new mongoose.Schema({
+var mongoose = require("mongoose");
+
+var userSchema = new mongoose.Schema({
     fullName: {
         type: String,
         required: true

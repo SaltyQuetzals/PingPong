@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 var app = express();
+var server = require('http').createServer();
 var io = require('socket.io')(server);
 var mongoose = require('mongoose');
 
@@ -9,8 +10,6 @@ mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/PingPong');
 var db = mongoose.connection;
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: false
@@ -55,17 +54,26 @@ app.post('/ping/:id/pong', function(req, res)	{
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-	var err = new Error('Not Found');
-	err.status = 404;
-	next(err);
+	var obj = {
+		status: "failure",
+		data: {
+			message: "Endpoint not found."
+		}
+	};
+	res.json(obj);
 });
 
 // error handlers
 
 // production error handler
-// no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-	res.status(err.status || 500);
+	var obj = {
+		status: "failure",
+		data: {
+			message: "Internal Error."
+		}
+	};
+	res.json(obj);
 });
 
 app.listen(80);
