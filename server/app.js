@@ -6,6 +6,8 @@ var server = require('http').createServer();
 var io = require('socket.io')(server);
 var mongoose = require('mongoose');
 var twilioNotifications = require('./middleware/twilioNotifications');
+var cfg = require('./config');
+var twilioClient = require('./twilioClient');
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/PingPong');
@@ -52,6 +54,7 @@ app.get('/', function(req, res) {
 			message: "Hello!"
 		}
 	});
+	twilioClient.sendSms("+8172350630","testing testing 123");
 });
 
 app.post('/register', function(req, res) {
