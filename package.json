@@ -1,0 +1,25 @@
+{
+  "name": "pingpong",
+  "version": "1.0.0",
+  "description": "A project developed for TAMUhack 2016.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SaltyQuetzals/PingPong.git"
+  },
+  "author": "Gabriel Britain, Devesh Singh, Florian Janke, Justin Lovelace",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SaltyQuetzals/PingPong/issues"
+  },
+  "homepage": "https://github.com/SaltyQuetzals/PingPong#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "mongoose": "^4.6.2",
+    "socket.io": "^1.4.8"
+  }
+}
