@@ -4,7 +4,9 @@ var bodyParser = require('body-parser');
 var app = express();
 var server = require('http').createServer();
 var io = require('socket.io')(server);
+var faker = require('faker');
 var mongoose = require('mongoose');
+require('mongoose-double')(mongoose);
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/PingPong');
@@ -84,7 +86,22 @@ app.post('/register/verify', function(req, res) {
 });
 
 app.post('/ping', function(req, res)	{
-	res.send('ping');
+	var ping = new Ping({
+		tags: req.body.tags,
+		locations: {
+			latitute: req.body.latitude,
+			longitude: req.body.longitude
+		},
+		aliases: [{
+			token: req.user._id.toString(),
+			alias: faker.name.findName();
+		}],
+		pinger: req.user._id.toString();
+	});
+	ping.save(function(err) {
+		if(err) req.json({status: "failure", data:{"message": "Unable to create ping"}});
+		else req.json({status: "success", data:{"message": "Created ping"}});
+	});
 });
 
 app.get('/ping/:id', function(req, res)	{
@@ -95,8 +112,12 @@ app.post('/ping/:id/pong', function(req, res)	{
 	res.send('ping id =' + req.params.id + ' pong');
 });
 
-app.get('/:user', function(req, res) {
-	res.send('user = ' + req.params.user);
+app.post('/ping/:id/chat', function(req, res)	{
+	res.send('ping id =' + req.params.id + ' pong');
+});
+
+app.get('/user', function(req, res) {
+	res.json(req.user);
 });
 
 app.post('/:user/preferences', function(req, res)	{

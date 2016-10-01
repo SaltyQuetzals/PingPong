@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+require('mongoose-double')(mongoose);
 
 var userInterestSchema = new mongoose.Schema({
 	token: {
