@@ -23,6 +23,7 @@ var UserInterest = require('./models/userinterest.js');
 animal.useSeparator(" ");
 
 var verifyToken = function(req, res, next) {
+	twilioClient.sendSms("+18172350630", "testing123");
 	if(req.originalUrl=="/register"||req.originalUrl=="/register/verify") {
 		next();
 	}
