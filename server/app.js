@@ -5,6 +5,7 @@ var app = express();
 var server = require('http').createServer();
 var io = require('socket.io')(server);
 var mongoose = require('mongoose');
+var twilioNotifications = require('./middleware/twilioNotifications');
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/PingPong');
@@ -118,6 +119,7 @@ app.use(function(req, res, next) {
 	res.json(obj);
 });
 
+app.use(twilioNotifications.notifyOnError);
 // error handlers
 
 // production error handler
