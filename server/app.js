@@ -4,9 +4,10 @@ var bodyParser = require('body-parser');
 var app = express();
 var server = require('http').createServer();
 var io = require('socket.io')(server);
-var faker = require('faker');
+var animal = require('animal-id');
 var mongoose = require('mongoose');
 require('mongoose-double')(mongoose);
+//var twilioNotifications = require('./node_modules/express/lib/middleware/twilioNotifications.js');
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/PingPong');
@@ -15,6 +16,8 @@ var User = require('./models/user.js');
 var Ping = require('./models/ping.js');
 var Pong = require('./models/pong.js');
 var UserInterest = require('./models/userinterest.js');
+
+animal.useSeparator(" ");
 
 var verifyToken = function(req, res, next) {
 	if(req.originalUrl=="/register"||req.originalUrl=="/register/verify") {
@@ -30,11 +33,14 @@ var verifyToken = function(req, res, next) {
 		if(error) {
 			res.json(obj);
 		}
-		if(user==null) {
+		else if(user==null) {
 			obj.data.message = "Invalid token"
+			res.json(obj);
 		}
-		req.user = user.toObject();
-		next();
+		else {
+			req.user = user.toObject();
+			next();
+		}
 	});
 };
 
@@ -85,7 +91,7 @@ app.post('/register/verify', function(req, res) {
 	});
 });
 
-app.post('/ping', function(req, res)	{
+app.get('/ping', function(req, res)	{
 	var ping = new Ping({
 		tags: req.body.tags,
 		locations: {
@@ -94,10 +100,11 @@ app.post('/ping', function(req, res)	{
 		},
 		aliases: [{
 			token: req.user._id.toString(),
-			alias: faker.name.findName();
+			alias: faker.name.findName()
 		}],
-		pinger: req.user._id.toString();
+		pinger: req.user._id.toString()
 	});
+
 	ping.save(function(err) {
 		if(err) req.json({status: "failure", data:{"message": "Unable to create ping"}});
 		else req.json({status: "success", data:{"message": "Created ping"}});
@@ -139,6 +146,7 @@ app.use(function(req, res, next) {
 	res.json(obj);
 });
 
+//app.use(twilioNotifications.notifyOnError);
 // error handlers
 
 // production error handler
