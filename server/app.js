@@ -6,6 +6,9 @@ var server = require('http').createServer();
 var io = require('socket.io')(server);
 var animal = require('animal-id');
 var mongoose = require('mongoose');
+var twilioNotifications = require('./middleware/twilioNotifications');
+var cfg = require('./config');
+var twilioClient = require('./twilioClient');
 require('mongoose-double')(mongoose);
 //var twilioNotifications = require('./node_modules/express/lib/middleware/twilioNotifications.js');
 
@@ -59,6 +62,7 @@ app.get('/', function(req, res) {
 			message: "Hello!"
 		}
 	});
+	twilioClient.sendSms("+8172350630","testing testing 123");
 });
 
 app.post('/register', function(req, res) {
