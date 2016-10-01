@@ -18,11 +18,14 @@ var userSchema = new mongoose.Schema({
         default: false
     },
     authyId: String,
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    }
+	notID:	{
+		type: String,
+		required: true
+	},
+	os:	{
+		type: String,
+		required: true
+	}
 });
 
 module.exports = mongoose.model('User', userSchema);
