@@ -28,7 +28,25 @@ app.post('/register', function(req, res) {
 });
 
 app.post('/register/:id', function(req, res) {
-	res.send('register id = ' + req.params.code);
+	User.searchOne({phone: req.body.phone, countryCode: req.body.countryCode}, function(user, error) {
+		var obj = {
+			status: "failure",
+			data: {
+				message: "Unable to search database"
+			}
+		};
+		if(error) {
+			res.json(obj);
+		}
+		if(user.authyId==req.params.id) {
+			obj.status = "success";
+			obj.data.message = "Successfully verified";
+		}
+		else {
+			obj.data.message = "Incorrect authorization ID"
+		}
+		res.json(obj);
+	});
 });
 
 app.get('/:user', function(req, res) {
@@ -79,6 +97,8 @@ app.use(function(err, req, res, next) {
 	res.json(obj);
 });
 
-app.listen(80);
+app.listen(80, function() {
+	console.log('Express has started on http://localhost; press Ctrl-C to terminate.');
+});
 
 module.exports = app;

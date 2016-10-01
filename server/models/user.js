@@ -13,11 +13,14 @@ var userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    authyId: String,
+    tags: [{
+        type: String
+    }],
     verified: {
         type: Boolean,
         default: false
     },
-    authyId: String,
 	notID:	{
 		type: String,
 		required: true
