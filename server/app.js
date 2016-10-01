@@ -9,6 +9,9 @@ var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/PingPong');
 var db = mongoose.connection;
+var User = require('./models/user.js');
+var Ping = require('./models/ping.js');
+var Pong = require('./models/pong.js');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
