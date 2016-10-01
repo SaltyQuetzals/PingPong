@@ -13,7 +13,7 @@ var userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    authyId: String,
+    SMScode: String,
     tags: [{
         type: String
     }],
