@@ -2,8 +2,12 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 var app = express();
+var io = require('socket.io')(server);
+var mongoose = require('mongoose');
 
-// view engine setup
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost/PingPong');
+var db = mongoose.connection;
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
