@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+require('mongoose-double')(mongoose);
 
 var pongSchema = new mongoose.Schema({
 	pingID: String,													// Mongoose default ID

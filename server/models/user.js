@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+require('mongoose-double')(mongoose);
 
 var userSchema = new mongoose.Schema({
     fullName: {
@@ -14,21 +15,23 @@ var userSchema = new mongoose.Schema({
         required: true
     },
     SMScode: String,
-    tags: [{
-        type: String
-    }],
+    tags: [{type: String}],
     verified: {
         type: Boolean,
         default: false
     },
-	notID:	{
+	noteID:	{
 		type: String,
 		required: true
 	},
 	os:	{
 		type: String,
 		required: true
-	}
+	},
+    email: {
+        type: String,
+        default: "help@me.com"
+    }
 });
 
 module.exports = mongoose.model('User', userSchema);
