@@ -91,7 +91,7 @@ app.post('/register/verify', function(req, res) {
 	});
 });
 
-app.get('/ping', function(req, res)	{
+app.post('/ping', function(req, res)	{
 	var ping = new Ping({
 		tags: req.body.tags,
 		locations: {
