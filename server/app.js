@@ -112,7 +112,11 @@ app.post('/ping', function(req, res)	{
 });
 
 app.get('/ping/:id', function(req, res)	{
-	res.send('ping id =' + req.params.id);
+	Ping.findById(req.params.id, function(ping, error) {
+		if(error) req.json({status: "failure", data:{"message": "Unable to search for ping"}});
+		else if(ping==null) req.json({status: "failure", data:{"message": "Ping not found"}});
+		else req.json(ping.toObject());
+	});
 });
 
 app.post('/ping/:id/pong', function(req, res)	{
@@ -124,7 +128,7 @@ app.post('/ping/:id/chat', function(req, res)	{
 });
 
 app.get('/user', function(req, res) {
-	res.json(req.user);
+	res.json({status: "success", data: req.user});
 });
 
 app.post('/:user/preferences', function(req, res)	{
@@ -154,7 +158,7 @@ app.use(function(err, req, res, next) {
 	var obj = {
 		status: "failure",
 		data: {
-			message: "Internal Error."
+			message: err
 		}
 	};
 	res.json(obj);
