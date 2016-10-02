@@ -66,6 +66,7 @@ app.get('/', function(req, res) {
 
 app.post('/register', function(req, res) {
 	res.send('register');
+
 });
 
 app.post('/register/verify', function(req, res) {
@@ -159,7 +160,7 @@ app.post('/user/preferences', function(req, res)	{
 					}
 					UserInterest.create(objects, function(error) {
 						if(error) {
-							res.json({status: "failure", data: { message: "Unable to create replacement tags in UserInterest" } }); 
+							res.json({status: "failure", data: { message: "Unable to create replacement tags in UserInterest" } });
 						}
 						else {
 							res.json({status: "success", data: { message: "Successfully changed preferences" } });
