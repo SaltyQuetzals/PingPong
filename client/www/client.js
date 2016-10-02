@@ -23,7 +23,7 @@ $(document).ajaxError(function(event, jqxhr, settings) {
 var token = localStorage.getItem("token") || false,
 	userFlow = localStorage.getItem("userFlow") || 0,
 	backable = false,
-	root = "https://pingpong.loud.red/";
+	root = "https://pingpong.loud.red";
 
 $("#back").click(function() {
 	if (backable) {
@@ -117,6 +117,7 @@ function viewUpdate() {
 		});
 		function actualStuff() {
 			updateLoc();
+			$("header").addClass("shaded");
 			replaceView("#intro", "#main");
 			FCMPlugin.getToken(
 				function(noteid) {
