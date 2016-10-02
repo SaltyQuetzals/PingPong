@@ -112,6 +112,8 @@ function viewUpdate() {
 			} else {
 				$("#error").text("An error occurred: "+res.data.message);
 				replaceView("#loader", "#error");
+				localStorage.clear();
+				window.location.reload();
 			}
 		}).fail(function(jqXHR, textStatus) {
 			$("#error div").text("The server seems to be offline.");
@@ -255,4 +257,6 @@ function updateLoc() {
 	});
 }
 
-viewUpdate();
+$(function() {
+	document.addEventListener("deviceready", viewUpdate, false);
+});
