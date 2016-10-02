@@ -273,32 +273,33 @@ button.main {
   pointer-events: none;
   position: absolute;
 }
-#recent > a {
+#recent a {
   text-decoration: none;
   display: block;
   position: relative;
   padding: 0 6.4px;
   color: inherit;
 }
-#recent > a .tags {
+#recent a .tags {
   margin-right: 38.4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-#recent > a .tags span {
+#recent a .tags span {
   background: none;
   color: inherit;
   border-color: rgba(0, 0, 0, 0.2);
 }
-#recent > a .expiration {
+#recent a .expiration {
   width: 2em;
   position: absolute;
   top: 3.2px;
   right: 6.4px;
   text-align: right;
 }
-#loader {
+#loader,
+#error {
   position: fixed;
   top: 0;
   left: 0;
@@ -307,6 +308,15 @@ button.main {
   background: #165c64;
   color: white;
   z-index: 20;
+  text-align: center;
+}
+#loader > div,
+#error > div {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 #loader > div {
   border: 0.5em solid transparent;
@@ -314,9 +324,23 @@ button.main {
   height: 3em;
   text-indent: -9999px;
   border-radius: 999px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
   border-top-color: inherit;
-  transform: translate(-50%, -50%);
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+}
+@-webkit-keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+@keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
