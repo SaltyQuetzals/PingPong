@@ -4,11 +4,8 @@ var SchemaTypes = mongoose.Schema.Types;
 
 var pingSchema = new mongoose.Schema({
     tags: [String],
-    loc: {
-        type: String,
-        coordinates: [{
-            type: SchemaTypes.Double
-        }]
+	loc: {
+        type: [SchemaTypes.Double]
     },
     aliases: [{
         token: String,

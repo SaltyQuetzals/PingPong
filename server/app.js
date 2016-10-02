@@ -25,33 +25,30 @@ var serverKey = 'AIzaSyCvy2ezN-lrEH0qGmDYVeacrxnfJA-H62E';
 var fcm = new FCM(serverKey);
 
 var verifyToken = function(req, res, next) {
-	console.log(req.method);
     if ((req.originalUrl == "/register" || req.originalUrl == "/register/verify") && (req.method == "POST")) {
-		console.log("You are at /register or /register/verify");
-		next();
+        next();
+    } else {
+        User.findById(req.query.token, function(error, user) {
+            var obj = {
+                status: "failure",
+                data: {
+                    message: "Unable to search database"
+                }
+            };
+            if (error) {
+                res.json(obj);
+            } else if (user == null) {
+                obj.data.message = "Invalid token"
+                res.json(obj);
+            } else if (user.verified == false) {
+                obj.data.message = "Account not verified"
+                res.json(obj);
+            } else {
+                req.user = user.toObject();
+                next();
+            }
+        });
     }
-	else {
-	    User.findById(req.body.token, function(error, user) {
-	        var obj = {
-	            status: "failure",
-	            data: {
-	                message: "Unable to search database"
-	            }
-	        };
-	        if (error) {
-	            res.json(obj);
-	        } else if (user == null) {
-	            obj.data.message = "Invalid token"
-	            res.json(obj);
-	        } else if (user.verified == false) {
-	            obj.data.message = "Account not verified"
-	            res.json(obj);
-	        } else {
-	            req.user = user.toObject();
-	            next();
-	        }
-	    });
-	}
 };
 
 app.use(function(req, res, next) {
@@ -67,6 +64,8 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(verifyToken);
+
+User.collection.drop();
 
 app.listen(3514, function() {
     console.log('Express has started on http://localhost; press Ctrl-C to terminate.');
@@ -92,23 +91,26 @@ app.post('/register', function(req, res) {
         verified: false,
         noteId: req.body.noteId,
         os: "_",
-        loc: {
-            type: "Point",
-            coordinates: [0, 0]
-        }
+        loc: [0, 0]
     });
     user.save(function(err, user) {
         if (err) return console.error(err);
-		else res.json({status: "success", data: {message: "Successfully registered"}});
     });
     twilioClient.sendSms(req.body.phone, authCode);
+    res.json({
+        status: "success",
+        data: {
+            message: "Successfully registered"
+        }
+    });
 });
 
 app.post('/register/verify', function(req, res) {
-    User.searchOne({
+    User.findOne({
         phone: req.body.phone,
-        countryCode: req.body.countryCode
+        countryCode: req.body.cc
     }, function(error, user) {
+		console.log("User: "+user)
         var obj = {
             status: "failure",
             data: {
@@ -116,17 +118,36 @@ app.post('/register/verify', function(req, res) {
             }
         };
         if (error) {
+			console.log("error: "+error);
             res.json(obj);
         } else if (user == null) {
             obj.data.message = "User does not exist";
+			console.log("User does not exist");
+            res.json(obj);
         } else if (user.SMScode == req.body.SMScode) {
-            obj.status = "success";
-            obj.data.message = "Successfully verified";
-            obj.data.token = user._id.toString();
+            User.findOneAndUpdate({
+                phone: req.body.phone,
+                countryCode: req.body.cc
+            }, {
+                $set: {
+                    verified: true
+                }
+            }, function(error, doc) {
+                if (error) {
+                    res.json(obj);
+                } else {
+                    obj.status = "success";
+                    obj.data.message = "Successfully verified";
+                    obj.data.token = user._id.toString();
+					console.log("yes");
+                    res.json(obj);
+                }
+            });
         } else {
             obj.data.message = "Incorrect authorization ID"
+			console.log("Incorrect authorization ID");
+            res.json(obj);
         }
-        res.json(obj);
     });
 });
 
@@ -207,14 +228,14 @@ app.post('/ping', function(req, res) {
 app.get('/ping/:id', function(req, res) {
     Ping.findById(req.params.id, function(error, ping) {
         if (error) {
-            req.json({
+            res.json({
                 status: "failure",
                 data: {
                     "message": "Unable to search for ping"
                 }
             });
         } else if (ping == null) {
-            req.json({
+            res.json({
                 status: "failure",
                 data: {
                     "message": "Ping not found"
@@ -222,7 +243,7 @@ app.get('/ping/:id', function(req, res) {
             });
         } else {
             var pingJs = ping.toObject();
-            req.json({
+            res.json({
                 status: "success",
                 data: pingJs
             });

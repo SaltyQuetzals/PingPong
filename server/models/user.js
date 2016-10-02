@@ -13,10 +13,7 @@ var userSchema = new mongoose.Schema({
     },
     SMScode: String,
     loc: {
-        type: String,
-        coordinates: [{
-            type: SchemaTypes.Double
-        }]
+        type: [SchemaTypes.Double]
     },
     tags: [{
         type: String
@@ -24,10 +21,6 @@ var userSchema = new mongoose.Schema({
     verified: {
         type: Boolean,
         default: false
-    },
-    noteId: {
-        type: String,
-        required: true
     },
     os: {
         type: String,
