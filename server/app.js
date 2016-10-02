@@ -89,11 +89,12 @@ app.post('/register', function(req, res) {
         os: "_",
         loc: {
             type: "Point",
-            coordinates: [req.body.longitude, req.body.latitude]
+            coordinates: [0, 0]
         }
     });
     user.save(function(err, user) {
         if (err) return console.error(err);
+		else res.json({status: "success", data: {message: "Successfully registered"}});
     });
     twilioClient.sendSms(req.body.phone, authCode);
 });
