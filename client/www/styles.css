@@ -262,6 +262,15 @@ button.main {
   letter-spacing: 0.1em;
   color: #444;
 }
+#map #ping {
+  position: absolute;
+  font-size: 16px;
+  height: 0.5em;
+  width: 0.53em;
+  top: 50%;
+  left: 50%;
+  background: red;
+}
 #tags {
   margin-top: 1em;
   border-bottom: 1px solid;
