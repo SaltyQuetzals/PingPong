@@ -57,7 +57,7 @@ app.use(bodyParser.urlencoded({
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(verifyToken);
 
-app.listen(80, function() {
+app.listen(3514, function() {
     console.log('Express has started on http://localhost; press Ctrl-C to terminate.');
 });
 
