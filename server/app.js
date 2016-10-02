@@ -10,7 +10,6 @@ var twilioNotifications = require('./middleware/twilioNotifications');
 var cfg = require('./config');
 var twilioClient = require('./twilioClient');
 require('mongoose-double')(mongoose);
-//var twilioNotifications = require('./node_modules/express/lib/middleware/twilioNotifications.js');
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/PingPong');
@@ -23,7 +22,6 @@ var UserInterest = require('./models/userinterest.js');
 animal.useSeparator(" ");
 
 var verifyToken = function(req, res, next) {
-	twilioClient.sendSms("+18172350630", "testing123");
 	if(req.originalUrl=="/register"||req.originalUrl=="/register/verify") {
 		next();
 	}
@@ -68,6 +66,7 @@ app.get('/', function(req, res) {
 
 app.post('/register', function(req, res) {
 	res.send('register');
+
 });
 
 app.post('/register/verify', function(req, res) {
@@ -81,7 +80,7 @@ app.post('/register/verify', function(req, res) {
 		if(error) {
 			res.json(obj);
 		}
-		if(user==null) {
+		else if(user==null) {
 			obj.data.message = "User does not exist";
 		}
 		else if(user.SMScode==req.body.SMScode) {
@@ -120,7 +119,7 @@ app.get('/ping/:id', function(req, res)	{
 	Ping.findById(req.params.id, function(ping, error) {
 		if(error) req.json({status: "failure", data:{"message": "Unable to search for ping"}});
 		else if(ping==null) req.json({status: "failure", data:{"message": "Ping not found"}});
-		else req.json(ping.toObject());
+		else req.json({status: "success", data: {ping.toObject()}});
 	});
 });
 
