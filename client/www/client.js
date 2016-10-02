@@ -1,34 +1,29 @@
 $("#tags input").tagsInput({
 	"defaultText": "Add an interest...",
 	"onChange": function() {
-		// $.post(root+"/register/verify", {
-		// 	cc: $("#prefix").val(),
-		// 	phone: $(".telephone input").val(),
-		// 	SMScode: $(".verify input").val()
-		// }).done(function(res) {
-		// 	if (res.status == "success") {
-		// 		userFlow = 1;
-		// 		localStorage.setItem("userFlow", 1);
-		// 		backAction(false);
-		// 		viewUpdate();
-		// 	} else {
-		// 		alert("An error occurred");
-		// 	}
-		// });
+		$.post(root+"/user/preferences", {
+			token: token,
+			tags: $("#tags input").val()
+		}).done(function(res) {
+			if (res.status == "success") {
+				// saved!
+			} else {
+				alert("An error occurred: "+res.data.message);
+			}
+		});
 	},
-	//"delimiter": [",", ";", " "],
 	"minChars" : 0,
 	"maxChars" : 0
 });
 
-$(document).ajaxError(function() {
-	alert("The server seems to be offline. Are you connected to the internet?");
+$(document).ajaxError(function(event, jqxhr, settings) {
+	alert("The server seems to be unreachable. Are you connected to the internet?");
 });
 
-var token = localStorage.getItem("token"),
-	 userFlow = localStorage.getItem("userFlow") || 1,
-	 backable = false,
-	 root = "/";
+var token = localStorage.getItem("token") || false,
+	userFlow = localStorage.getItem("userFlow") || 1,
+	backable = false,
+	root = "/";
 
 $("#back").click(function() {
 	if (backable) {
@@ -94,52 +89,128 @@ function viewUpdate() {
 								backAction(false);
 								viewUpdate();
 							} else {
-								alert("An error occurred");
+								alert("An error occurred: "+res.data.message);
 							}
 						});
 						return false;
 					});
 				} else {
-					alert("An error occurred");
+					alert("An error occurred: "+res.data.message);
 				}
 			});
 			return false;
 		});
 	} else if (userFlow == 1) { //
-		replaceView("#intro", "#main");
-		$("#main button").click(function() {
-			if (true) {
-				$("#map").addClass("collapsed");
-				$("#recent").addClass("pushedout");
-				setTimeout(function() {
-					$("#recent").hide();
-				}, 300);
-				$(".tagsinput").addClass("selectable");
-				backAction(function() {
-					$("#map").removeClass("collapsed");
-					$("#recent").show().removeClass("pushedout");
-					$(".tagsinput").removeClass("selectable");
-					$(".tagsinput span").unbind("click");
-				});
-				$(".tagsinput span").click(function() {
-					$(this).toggleClass("active");
-				});
-				var ping = {};
-				navigator.geolocation.getCurrentPosition(function(position) {
-					ping.lat = position.coords.latitude;
-					ping.long = position.coords.longitude;
-				}, function(error) {
-					alert(error.message);
-				}, {
-					maximumAge: 3000,
-					timeout: 5000,
-					enableHighAccuracy: true
-				});
+		$.get(root+"/user", {
+			token: token
+		}).done(function(res) {
+			if (res.status == "success") {
+				alert(JSON.stringify(res.data));
+				actualStuff();
+			} else {
+				$("#error").text("An error occurred: "+res.data.message);
+				replaceView("#loader", "#error");
 			}
+		}).fail(function(jqXHR, textStatus) {
+			$("#error div").text("The server seems to be offline.");
+			replaceView("#loader", "#error");
 		});
-		$("#recent a").click(function() {
-			return false;
-		});
+		function actualStuff() {
+			updateLoc();
+			replaceView("#intro", "#main");
+			FCMPlugin.getToken(
+				function(noteid) {
+					$.post(root+"/user/updatetoken", {
+						token: token,
+						noteid: notiftoken
+					}).done(function(res) {
+						if (res.status == "success") {
+							// success!
+						} else {
+							alert("An error occurred: "+res.data.message);
+						}
+					});
+				},
+				function(err) {
+					alert("An error occurred: "+err);
+				}
+			);
+			FCMPlugin.onNotification(
+				function(data) {
+					if (data.wasTapped) {
+						//Notification was received on device tray and tapped by the user.
+						alert( JSON.stringify(data) );
+					} else {
+						//Notification was received in foreground. Maybe the user needs to be notified.
+						alert( JSON.stringify(data) );
+					}
+				},
+				function(msg) {
+					console.log('onNotification callback successfully registered: ' + msg);
+				},
+				function(err) {
+					console.log('Error registering onNotification callback: ' + err);
+				}
+			);
+			$("#main button").click(function() {
+				if (true) {
+					$("#map").addClass("collapsed");
+					$("#recent").addClass("pushedout");
+					setTimeout(function() {
+						$("#recent").hide();
+					}, 300);
+					$(".tagsinput").addClass("selectable");
+					backAction(function() {
+						$("#map").removeClass("collapsed");
+						$("#recent").show().removeClass("pushedout");
+						$(".tagsinput").removeClass("selectable");
+						$(".tagsinput span").unbind("click");
+					});
+					$(".tagsinput span").click(function() {
+						$(this).toggleClass("active");
+					});
+					var ping = {};
+					navigator.geolocation.getCurrentPosition(function(position) {
+						ping.long = position.coords.longitude;
+						ping.lat = position.coords.latitude;
+					}, function(error) {
+						alert(error.message);
+					}, {
+						maximumAge: 3000,
+						timeout: 5000,
+						enableHighAccuracy: true
+					});
+				} else {
+					replaceView("#main", "#loader");
+					$.post(root+"/ping", {
+						token: token,
+						tags: $("#tags input").val(),
+						longitude: ping.long,
+						latitude: ping.lat
+					}).done(function(res) {
+						if (res.status == "success") {
+							replaceView("#loader", "#main");
+							$("#back").click();
+							backAction(false);
+						} else {
+							alert("An error occurred: "+res.data.message);
+						}
+					});
+				}
+			});
+			$("#recent a").click(function() {
+				$.get(root+"/ping/"+$(this).attr("data-id"), {
+					token: token
+				}).done(function(res) {
+					if (res.status == "success") {
+						alert(JSON.stringify(res.data));
+					} else {
+						alert("An error occurred: "+res.data.message);
+					}
+				});
+				return false;
+			});
+		}
 		/*var push = PushNotification.init({
 			"android": {
 				"senderID": "XXXXXXXX"
@@ -188,7 +259,29 @@ function replaceMap(c) {
 
 function updateLoc() {
 	navigator.geolocation.getCurrentPosition(function(position) {
-		replaceMap(position.coords.latitude+","+position.coords.longitude);
+		$.post(root+"/user/location", {
+			token: token,
+			longitude: position.coords.longitude,
+			latitude: position.coords.latitude
+		}).done(function(res) {
+			if (res.status == "success") {
+				replaceMap(position.coords.longitude+","+position.coords.latitude);
+				$("#recent .list").html("");
+				for (var i = 0; i < res.data.length; i++) {
+					var ping = res.data[i],
+						link = $("<a href='#'>").attr("data-id", ping.id),
+						taglist = $("<div>").addClass("tags");
+					for (var j = 0; j < ping.tags; j++) {
+						taglist.append($("<span>").text(ping.tags[i]));
+					}
+					link.append(taglist);
+					$("#recent .list").append(link);
+				}
+				$("#recent .list").html("");
+			} else {
+				alert("An error occurred: "+res.data.message);
+			}
+		});
 	}, function(error) {
 		alert(error.message);
 	}, {
@@ -197,8 +290,6 @@ function updateLoc() {
 		enableHighAccuracy: true
 	});
 }
-
-updateLoc();
 
 replaceMap("40.714728,-73.998672");
 

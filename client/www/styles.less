@@ -296,7 +296,7 @@ button.main {
 		pointer-events: none;
 		position: absolute;
 	}
-	> a {
+	a {
 		text-decoration: none;
 		display: block;
 		position: relative;
@@ -323,9 +323,7 @@ button.main {
 	}
 }
 
-// Loading screen
-
-#loader {
+#loader, #error {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -334,16 +332,37 @@ button.main {
 	background: @maincolor;
 	color: white;
 	z-index: 20;
+	text-align: center;
+	> div {
+		width: 100%;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+}
+
+// Loading screen
+
+#loader {
 	> div {
 		border: 0.5em solid transparent;
 		width: 3em;
 		height: 3em;
 		text-indent: -9999px;
 		border-radius: 999px;
-		position: absolute;
-		top: 50%;
-		left: 50%;
 		border-top-color: inherit;
-		transform: translate(-50%, -50%);
+		-webkit-animation: spin 1s linear infinite;
+		animation: spin 1s linear infinite;
 	}
+}
+
+@-webkit-keyframes spin {
+	from { transform: translate(-50%, -50%) rotate(0deg); }
+	to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes spin {
+	from { transform: translate(-50%, -50%) rotate(0deg); }
+	to { transform: translate(-50%, -50%) rotate(360deg); }
 }
