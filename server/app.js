@@ -50,18 +50,18 @@ var verifyToken = function(req, res, next) {
     });
 };
 
+app.use(function(req, res) {
+    res.header('Access-Control-Allow-Origin', '*'); // ???
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+});
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(verifyToken);
-
-app.use(function() {
-    res.header('Access-Control-Allow-Origin', '*'); // ???
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-});
 
 app.listen(3514, function() {
     console.log('Express has started on http://localhost; press Ctrl-C to terminate.');
