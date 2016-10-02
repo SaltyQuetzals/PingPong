@@ -2,10 +2,6 @@ var mongoose = require("mongoose");
 require('mongoose-double')(mongoose);
 
 var userSchema = new mongoose.Schema({
-    fullName: {
-        type: String,
-        required: true
-    },
     countryCode: {
         type: String,
         required: true
