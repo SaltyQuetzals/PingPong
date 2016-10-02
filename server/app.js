@@ -25,29 +25,33 @@ var serverKey = 'AIzaSyCvy2ezN-lrEH0qGmDYVeacrxnfJA-H62E';
 var fcm = new FCM(serverKey);
 
 var verifyToken = function(req, res, next) {
+	console.log(req.method);
     if ((req.originalUrl == "/register" || req.originalUrl == "/register/verify") && (req.method == "POST")) {
-        next();
+		console.log("You are at /register or /register/verify");
+		next();
     }
-    User.findById(req.body.token, function(error, user) {
-        var obj = {
-            status: "failure",
-            data: {
-                message: "Unable to search database"
-            }
-        };
-        if (error) {
-            res.json(obj);
-        } else if (user == null) {
-            obj.data.message = "Invalid token"
-            res.json(obj);
-        } else if (user.verified == false) {
-            obj.data.message = "Account not verified"
-            res.json(obj);
-        } else {
-            req.user = user.toObject();
-            next();
-        }
-    });
+	else {
+	    User.findById(req.body.token, function(error, user) {
+	        var obj = {
+	            status: "failure",
+	            data: {
+	                message: "Unable to search database"
+	            }
+	        };
+	        if (error) {
+	            res.json(obj);
+	        } else if (user == null) {
+	            obj.data.message = "Invalid token"
+	            res.json(obj);
+	        } else if (user.verified == false) {
+	            obj.data.message = "Account not verified"
+	            res.json(obj);
+	        } else {
+	            req.user = user.toObject();
+	            next();
+	        }
+	    });
+	}
 };
 
 app.use(function(req, res, next) {
