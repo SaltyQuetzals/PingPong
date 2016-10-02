@@ -235,7 +235,7 @@ function updateLoc() {
 				$("#recent .list").html("");
 				for (var i = 0; i < res.data.length; i++) {
 					var ping = res.data[i],
-						link = $("<a href='#'>").attr("data-id", ping.id),
+						link = $("<a href='#'>").attr("data-id", ping._id),
 						taglist = $("<div>").addClass("tags");
 					for (var j = 0; j < ping.tags; j++) {
 						taglist.append($("<span>").text(ping.tags[i]));

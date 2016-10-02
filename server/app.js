@@ -69,7 +69,7 @@ app.use(verifyToken);
 User.collection.drop();
 
 app.listen(3514, function() {
-    console.log('Express has started on http://localhost; press Ctrl-C to terminate.');
+    console.log('Express has started on http://localhost:3514; press Ctrl-C to terminate.');
 });
 
 app.get('/', function(req, res) {
