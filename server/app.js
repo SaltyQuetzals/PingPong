@@ -55,7 +55,7 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(express.static(path.join(__dirname, 'public')));
-//app.use(verifyToken);
+app.use(verifyToken);
 
 app.listen(80, function() {
     console.log('Express has started on http://localhost; press Ctrl-C to terminate.');
@@ -187,7 +187,6 @@ app.post('/ping', function(req, res) {
                         });
                     }
                 });
-
             }
         }
     });
