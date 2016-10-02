@@ -25,7 +25,7 @@ $(document).ajaxError(function(event, jqxhr, settings) {
 var token = localStorage.getItem("token") || false,
 	userFlow = localStorage.getItem("userFlow") || 0,
 	backable = false,
-	root = "http://localhost:3514";
+	root = "https://pingpong.loud.red";
 
 $("#back").click(function() {
 	if (backable) {
@@ -254,7 +254,5 @@ function updateLoc() {
 		enableHighAccuracy: true
 	});
 }
-
-replaceMap("40.714728,-73.998672");
 
 viewUpdate();
