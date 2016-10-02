@@ -17,7 +17,6 @@ var db = mongoose.connection;
 var User = require('./models/user.js');
 var Ping = require('./models/ping.js');
 var Pong = require('./models/pong.js');
-var UserInterest = require('./models/userinterest.js');
 
 animal.useSeparator(" ");
 

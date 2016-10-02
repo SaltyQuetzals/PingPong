@@ -19,7 +19,8 @@ var pingSchema = new mongoose.Schema({
         expires: '1hr',
         default: Date.now
     }, // Expire after set time
-    pinger: String
+    pinger: String,
+	numberOfPongers: {type: Number, default: 0}
 });
 
 pingSchema.index({
