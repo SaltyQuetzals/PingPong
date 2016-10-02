@@ -36,6 +36,7 @@ var verifyToken = function(req, res, next) {
                 }
             };
             if (error) {
+				console.error(error);
                 res.json(obj);
             } else if (user == null) {
                 obj.data.message = "Invalid token"
@@ -87,7 +88,7 @@ app.post('/register', function(req, res) {
         phone: req.body.phone,
         countryCode: req.body.cc
     }, function(error, preexistingUser) {
-        if (preexistingUser) {
+        if (preexistingUser != null) {
             User.findOneAndUpdate({
                 phone: req.body.phone,
                 countryCode: req.body.cc
@@ -233,7 +234,7 @@ app.post('/ping', function(req, res) {
                 fcm.send(message, function(err, response) {
                     if (err) {
                         res.json({
-                            status: "success",
+                            status: "failure",
                             data: err
                         });
 
