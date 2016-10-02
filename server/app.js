@@ -6,10 +6,11 @@ var server = require('http').createServer();
 var io = require('socket.io')(server);
 var animal = require('animal-id');
 var mongoose = require('mongoose');
+require('mongoose-double')(mongoose);
 var twilioNotifications = require('./middleware/twilioNotifications');
 var cfg = require('./config');
 var twilioClient = require('./twilioClient');
-require('mongoose-double')(mongoose);
+var FCM = require('fcm-push');
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/PingPong');
@@ -19,6 +20,9 @@ var Ping = require('./models/ping.js');
 var Pong = require('./models/pong.js');
 
 animal.useSeparator(" ");
+
+var serverKey = '422920317003';
+var fcm = new FCM(serverKey);
 
 var verifyToken = function(req, res, next) {
     if ((req.originalUrl == "/register" || req.originalUrl == "/register/verify") && (req.method == "POST")) {
@@ -63,8 +67,7 @@ app.get('/', function(req, res) {
     });
 });
 
-//THIS SHOULD BE A POST BUT I'M RETARDED//
-app.get('/register', function(req, res) {
+app.post('/register', function(req, res) {
     var authCode = "" + Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10);
     console.log(authCode);
     var user = new User({
@@ -73,7 +76,7 @@ app.get('/register', function(req, res) {
         SMScode: authCode,
         tags: [],
         verified: false,
-        noteID: "_",
+        noteId: req.body.noteId,
         os: "_",
         loc: {
             type: "Point",
@@ -114,7 +117,7 @@ app.post('/register/verify', function(req, res) {
 
 app.post('/ping', function(req, res) {
     var ping = new Ping({
-        tags: req.body.tags,
+        tags: req.body.tags.split(","),
         loc: {
             type: "Point",
             coordinates: [req.body.longitude, req.body.latitude]
@@ -145,20 +148,44 @@ app.post('/ping', function(req, res) {
                 data: error
             });
         } else {
-            var tags = req.body.tags;
+            var tags = req.body.tags.split(",");
             var trueusers = [];
             for (var i = 0; i < users.length; i++) {
-                if (users[i].tags.filter(function(value) {
+                var ithUser = users[i];
+                if (ithUser.tags.filter(function(value) {
                         return tags.indexOf(value) > -1;
                     }).length != 0) {
-                    var tempUser = users[i].toObject();
+                    var tempUser = ithUser.toObject();
                     trueusers.push(tempUser);
                 }
             }
-            res.json({
-                status: "success",
-                data: trueusers
-            });
+            for (var i = 0; i < trueusers.length; i++) {
+                var ithUser = trueusers[i];
+                var message = {
+                    to: ithUser.noteId,
+                    priority: "normal",
+                    notification: {
+                        body: "Someone who shares your interest in near you!",
+                        title: "You've been Pinged",
+                        icon: "new",
+                    }
+                };
+                fcm.send(message, function(err, response) {
+                    if (err) {
+                        res.json({
+                            status: "success",
+                            data: err
+                        });
+
+                    } else {
+                        res.json({
+                            status: "success",
+                            data: trueusers
+                        });
+                    }
+                });
+
+            }
         }
     });
 });
@@ -233,7 +260,7 @@ app.get('/user', function(req, res) {
 app.post('/user/preferences', function(req, res) {
     User.findByIdAndUpdate(req.user._id.toString(), {
         $set: {
-            tags: req.body.tags
+            tags: req.body.tags.split(",")
         }
     }, function(error, doc) {
         if (error) {
@@ -285,10 +312,33 @@ app.post('/user/location', function(req, res) {
                             truepings.push(tempPing);
                         }
                     }
-                    res.json({
-                        status: "success",
-                        data: truepings
-                    });
+                    for (var i = 0; i < truepings.length; i++) {
+                        var ithPing = truepings[i];
+                        var message = {
+                            to: req.user.noteId,
+                            priority: "normal",
+                            notification: {
+                                body: "Someone who shares your interest in near you!",
+                                title: "You've been Pinged",
+                                icon: "new",
+                            }
+                        };
+                        fcm.send(message, function(err, response) {
+                            if (err) {
+                                res.json({
+                                    status: "success",
+                                    data: err
+                                });
+
+                            } else {
+                                res.json({
+                                    status: "success",
+                                    data: truepings
+                                });
+                            }
+                        });
+
+                    }
                 }
             });
         });
