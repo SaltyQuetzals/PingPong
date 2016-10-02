@@ -46,13 +46,16 @@ var verifyToken = function(req, res, next) {
 	});
 };
 
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: false
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(verifyToken);
+
+app.listen(80, function() {
+	console.log('Express has started on http://localhost; press Ctrl-C to terminate.');
+});
 
 app.get('/', function(req, res) {
 	res.json({
@@ -80,13 +83,15 @@ app.post('/register/verify', function(req, res) {
 		if(error) {
 			res.json(obj);
 		}
-		else if(user==null) {
-			obj.data.message = "User does not exist";
-		}
-		else if(user.SMScode==req.body.SMScode) {
-			obj.status = "success";
-			obj.data.message = "Successfully verified";
-			obj.data.token = user._id.toString();
+		else {
+			if(user==null) {
+				obj.data.message = "User does not exist";
+			}
+			else if(user.SMScode==req.body.SMScode) {
+				obj.status = "success";
+				obj.data.message = "Successfully verified";
+				obj.data.token = user._id.toString();
+			}
 		}
 		else {
 			obj.data.message = "Incorrect authorization ID"
@@ -201,8 +206,17 @@ app.use(function(err, req, res, next) {
 	res.json(obj);
 });
 
-app.listen(80, function() {
-	console.log('Express has started on http://localhost; press Ctrl-C to terminate.');
-});
+function distance(lat1, lon1, lat2, lon2) {
+	var R = 6371e3;
+	var x1 = lat2-lat1;
+	var dLat = x1*(Math.pi/180);
+	var x2 = lon2-lon1;
+	var dLon = x2*(Math.pi/180);
+	var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1*(Math.pi/180)) * Math.cos(lat2*(Math.pi/180)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+	var d = R * c;
+
+	return d;
+}
 
 module.exports = app;
