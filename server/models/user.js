@@ -25,7 +25,7 @@ var userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    noteID: {
+    noteId: {
         type: String,
         required: true
     },
