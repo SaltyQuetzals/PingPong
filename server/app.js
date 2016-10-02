@@ -83,26 +83,52 @@ app.get('/', function(req, res) {
 app.post('/register', function(req, res) {
     var authCode = "" + Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10);
     console.log(authCode);
-    var user = new User({
-        countryCode: req.body.cc || "+1",
-        phone: req.body.phone || "0123456789",
-        SMScode: authCode,
-        tags: [],
-        verified: false,
-        noteId: req.body.noteId,
-        os: "_",
-        loc: [0, 0]
-    });
-    user.save(function(err, user) {
-        if (err) return console.error(err);
-    });
-    twilioClient.sendSms(req.body.phone, authCode);
-    res.json({
-        status: "success",
-        data: {
-            message: "Successfully registered"
+    User.findOne({
+        phone: req.body.phone,
+        countryCode: req.body.cc
+    }, function(error, preexistingUser) {
+        if (preexistingUser) {
+            User.findOneAndUpdate({
+                phone: req.body.phone,
+                countryCode: req.body.cc
+            }, {
+                $set: {
+                    verified: false,
+                    SMScode: authCode
+                }
+            }, function(errorr, somestuff) {
+				if(errorr) console.error(errorr);
+				twilioClient.sendSms(req.body.phone, authCode);
+	            res.json({
+	                status: "success",
+	                data: {
+	                    message: "Successfully re-registered"
+	                }
+	            });
+            })
+        } else {
+            var user = new User({
+                countryCode: req.body.cc || "+1",
+                phone: req.body.phone || "0123456789",
+                SMScode: authCode,
+                tags: [],
+                verified: false,
+                noteId: req.body.noteId,
+                os: "_",
+                loc: [0, 0]
+            });
+            user.save(function(err, user) {
+                if (err) return console.error(err);
+            });
+            twilioClient.sendSms(req.body.phone, authCode);
+            res.json({
+                status: "success",
+                data: {
+                    message: "Successfully registered"
+                }
+            });
         }
-    });
+    })
 });
 
 app.post('/register/verify', function(req, res) {
@@ -110,7 +136,6 @@ app.post('/register/verify', function(req, res) {
         phone: req.body.phone,
         countryCode: req.body.cc
     }, function(error, user) {
-		console.log("User: "+user)
         var obj = {
             status: "failure",
             data: {
@@ -118,11 +143,10 @@ app.post('/register/verify', function(req, res) {
             }
         };
         if (error) {
-			console.log("error: "+error);
             res.json(obj);
         } else if (user == null) {
             obj.data.message = "User does not exist";
-			console.log("User does not exist");
+            console.log("User does not exist");
             res.json(obj);
         } else if (user.SMScode == req.body.SMScode) {
             User.findOneAndUpdate({
@@ -139,13 +163,13 @@ app.post('/register/verify', function(req, res) {
                     obj.status = "success";
                     obj.data.message = "Successfully verified";
                     obj.data.token = user._id.toString();
-					console.log("yes");
+                    console.log("yes");
                     res.json(obj);
                 }
             });
         } else {
             obj.data.message = "Incorrect authorization ID"
-			console.log("Incorrect authorization ID");
+            console.log("Incorrect authorization ID");
             res.json(obj);
         }
     });
