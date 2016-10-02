@@ -4,16 +4,15 @@ var SchemaTypes = mongoose.Schema.Types;
 
 var pingSchema = new mongoose.Schema({
 	tags: [String],
-	location: {
-		latitude: {type: SchemaTypes.Double, required: true},
-		longitude: {type: SchemaTypes.Double, required: true}
-	},
+	loc: {type: String, coordinates: [{type: SchemaTypes.Double}]},
 	aliases: [{
 		token: String,
 		alias: String
 	}],
-	expireby: { type: Date, expires: '1hr', default: Date.now },	// Expire after set time
+	expireAt: { type: Date, expires: '1hr', default: Date.now },	// Expire after set time
 	pinger: String
 });
+
+pingSchema.index({loc: '2dsphere'});
 
 module.exports = mongoose.model('Ping', pingSchema);
