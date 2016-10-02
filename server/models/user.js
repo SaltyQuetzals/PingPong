@@ -12,22 +12,31 @@ var userSchema = new mongoose.Schema({
         required: true
     },
     SMScode: String,
-    loc: {type: String, coordinates: [{type: SchemaTypes.Double}]},
-    tags: [{type: String}],
+    loc: {
+        type: String,
+        coordinates: [{
+            type: SchemaTypes.Double
+        }]
+    },
+    tags: [{
+        type: String
+    }],
     verified: {
         type: Boolean,
         default: false
     },
-	noteID:	{
-		type: String,
-		required: true
-	},
-	os:	{
-		type: String,
-		required: true
-	}
+    noteID: {
+        type: String,
+        required: true
+    },
+    os: {
+        type: String,
+        required: true
+    }
 });
 
-userSchema.index({loc: '2dsphere'});
+userSchema.index({
+    loc: '2dsphere'
+});
 
 module.exports = mongoose.model('User', userSchema);

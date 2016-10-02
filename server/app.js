@@ -76,7 +76,10 @@ app.get('/register', function(req, res) {
         verified: false,
         noteID: "_",
         os: "_",
-		loc: {type: "Point", coordinates: [req.body.longitude, req.body.latitude]}
+        loc: {
+            type: "Point",
+            coordinates: [req.body.longitude, req.body.latitude]
+        }
     });
     user.save(function(err, user) {
         if (err) return console.error(err);
@@ -113,9 +116,9 @@ app.post('/register/verify', function(req, res) {
 app.post('/ping', function(req, res) {
     var ping = new Ping({
         tags: req.body.tags,
-        locations: {
-            latitute: req.body.latitude,
-            longitude: req.body.longitude
+        loc: {
+            type: "Point",
+            coordinates: [req.body.longitude, req.body.latitude]
         },
         aliases: [{
             token: req.user._id.toString(),
@@ -123,44 +126,45 @@ app.post('/ping', function(req, res) {
         }],
         pinger: req.user._id.toString()
     });
-    User.searchOne({
-        phone: req.body.phone,
-        countryCode: req.body.cc,
-    }, function(error, user) {
-        var obj = {
-            status: "failure",
-            data: {
-                message: "Unable to search database"
-            }
-        };
-        if (error) {
-            res.json(obj);
-        } else if (user == null) {
-            obj.data.message = "User does not exist";
-        } else if (user.SMScode == req.body.SMScode) {
-            obj.status = "success";
-            obj.data.message = "Successfully verified";
-            obj.data.token = user._id.toString();
-        } else {
-            obj.data.message = "Incorrect authorization ID"
+    ping.save(function(err) {
+        if (err) {
+            res.json({
+                status: "failure",
+                data: err
+            });
         }
-        res.json(obj);
+    });
+    User.find({
+        loc: {
+            $near: [req.body.longitude, req.body.latitude],
+            $maxDistance: (3.0 / 6371.0)
+        }
+    }, function(error, users) {
+        if (error) {
+            res.json({
+                status: "failure",
+                data: error
+            });
+        } else {
+            var tags = req.body.tags;
+            var trueusers = [];
+            for (var i = 0; i < users.length; i++) {
+                if (users[i].tags.filter(function(value) {
+                        return tags.indexOf(value) > -1;
+                    }).length != 0) {
+                    var tempUser = users[i].toObject();
+                    trueusers.push(tempUser);
+                }
+            }
+            res.json({
+                status: "success",
+                data: trueusers
+            });
+        }
     });
 });
 
-app.post('/ping', function(req, res) {
-    var ping = new Ping({
-        tags: req.body.tags,
-        loc: {
-            type: "Point",
-            coordinates: [rec.body.longitude, rec.body.latitude]
-        },
-        aliases: [{
-            token: req.user._id.toString(),
-            alias: animal.getId()
-        }],
-        pinger: req.user._id.toString()
-    });
+app.get('/ping/:id', function(req, res) {
     Ping.findById(req.params.id, function(error, ping) {
         if (error) {
             req.json({
@@ -187,11 +191,37 @@ app.post('/ping', function(req, res) {
 });
 
 app.post('/ping/:id/pong', function(req, res) {
-    res.send('ping id =' + req.params.id + ' pong');
-});
-
-app.post('/ping/:id/chat', function(req, res) {
-    res.send('ping id =' + req.params.id + ' pong');
+    pong = new Pong({
+        pingId: req.body.pingId
+    });
+    pong.save(function(err) {
+        if (err) {
+            res.json({
+                status: "failure",
+                data: err
+            });
+        } else {
+            Ping.findByIdAndUpdate(req.body.pingId, {
+                $inc: {
+                    numberOfPongers: 1
+                }
+            }, function(error, ping) {
+                if (error) {
+                    res.json({
+                        status: "failure",
+                        data: error
+                    });
+                } else {
+                    res.json({
+                        status: "success",
+                        data: {
+                            message: "Successfully ponged a person"
+                        }
+                    });
+                }
+            });
+        }
+    });
 });
 
 app.get('/user', function(req, res) {
@@ -215,42 +245,10 @@ app.post('/user/preferences', function(req, res) {
                 }
             });
         } else {
-            UserInterest.remove({
-                token: user._id.toString()
-            }, function(error, docs) {
-                if (error) {
-                    res.send({
-                        status: "failure",
-                        data: {
-                            message: "Unable to update UserInterest"
-                        }
-                    });
-                } else {
-                    var objects = [];
-                    var tags = req.body.tags.slice(0);
-                    while (tags != []) {
-                        objects.unshift({
-                            token: req.user._id.toString(),
-                            tag: tags.pop()
-                        });
-                    }
-                    UserInterest.create(objects, function(error) {
-                        if (error) {
-                            res.json({
-                                status: "failure",
-                                data: {
-                                    message: "Unable to create replacement tags in UserInterest"
-                                }
-                            });
-                        } else {
-                            res.json({
-                                status: "success",
-                                data: {
-                                    message: "Successfully changed preferences"
-                                }
-                            });
-                        }
-                    });
+            res.json({
+                status: "success",
+                data: {
+                    message: "Successfully changed preferences"
                 }
             });
         }
