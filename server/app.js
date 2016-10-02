@@ -57,14 +57,17 @@ app.use(bodyParser.urlencoded({
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(verifyToken);
 
+app.use(function() {
+    res.header('Access-Control-Allow-Origin', '*'); // ???
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+});
+
 app.listen(3514, function() {
     console.log('Express has started on http://localhost; press Ctrl-C to terminate.');
 });
 
 app.get('/', function(req, res) {
-    res.header('Access-Control-Allow-Origin', '*'); // ???
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.json({
         status: "success",
         data: {
