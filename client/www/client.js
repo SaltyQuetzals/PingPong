@@ -21,9 +21,9 @@ $(document).ajaxError(function(event, jqxhr, settings) {
 });
 
 var token = localStorage.getItem("token") || false,
-	userFlow = localStorage.getItem("userFlow") || 1,
+	userFlow = localStorage.getItem("userFlow") || 0,
 	backable = false,
-	root = "/";
+	root = "https://pingpong.loud.red/";
 
 $("#back").click(function() {
 	if (backable) {
