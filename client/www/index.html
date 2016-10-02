@@ -1,11 +1,89 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-        <title>Blank App</title>
-    </head>
-    <body>
-        <script type="text/javascript" src="cordova.js"></script>
-    </body>
+<html >
+<head>
+	<meta charset="UTF-8">
+	<title>Ping Pong</title>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
+	<link type="text/css" rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header>
+	<button id="back">
+		Back
+		<div id="arrow">
+			<div class="pointer"></div>
+			<div class="line"></div>
+		</div>
+	</button>
+	<h1>Ping Pong</h1>
+</header>
+
+<main>
+	<div class="gone view" id="intro">
+		<h1>Welcome!</h1>
+		<div class="slidey">
+			<form action="#" class="verify">
+				<p>We sent a message to your phone number. Please enter it below.</p>
+				<input type="tel" placeholder="12345" />
+				<button type="submit" class="main">Continue</button>
+			</form>
+			<form action="#" class="telephone">
+				<p>Welcome to PingPong! This is a platform for you to connect with people who share similar interests. Enter your phone number to receive an authentication code.</p>
+				<select id="prefix"></select>
+				<input type="tel" placeholder="(555) 444 3333" />
+				<button type="submit" class="main">Send code</button>
+			</form>
+		</div>
+	</div>
+	<div class="gone view" id="main">
+		<div id="map">
+			<h2>Map</h2>
+			<a href="#" class="image">
+				Open in Maps...
+			</a>
+			<div class="buttonwrap">
+				<button class="main centered">
+					Ping
+					<div class="badge">2</div>
+				</button>
+			</div>
+		</div>
+		<div id="tags">
+			<h2>Your interests</h2>
+			<input value="test another" />
+		</div>
+		<div id="recent">
+			<h2>Recent pings</h2>
+			<a href="#">
+				<div class="tags">
+					<span>test</span>
+					<span>another</span>
+					<span>unicorn</span>
+				</div>
+				<div class="expiration">3h</div>
+			</a>
+			<a href="#">
+				<div class="tags">
+					<span>another</span>
+					<span>this</span>
+					<span>test</span>
+					<span>tag</span>
+				</div>
+				<div class="expiration">3h</div>
+			</a>
+		</div>
+	</div>
+</main>
+
+<div class="view" id="loader">
+	<div>Loading...</div>
+</div>
+
+<script type="text/javascript" src="cordova.js"></script>
+<script src='countrycodes.js'></script>
+<script src='jquery.min.js'></script>
+<script src='jquery.tagsinput.js'></script>
+<script src='client.js'></script>
+</body>
 </html>
+ 

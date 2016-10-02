@@ -1,0 +1,348 @@
+@maincolor: #165c64;
+@darkcolor: #444;
+
+@fontsize: 16px;
+@pad: 0.4*@fontsize;
+
+html, body, .view {
+	height: 100%;
+	min-height: 100%;
+	width: 100%;
+}
+
+body {
+	margin: 0;
+	margin: auto;
+	//max-width: 460px;
+	position: relative;
+	overflow-y: scroll;
+}
+
+body, button, input, textarea, select, .view {
+	font-family: sans-serif;
+	font-size: @fontsize;
+	display: inline-block;
+	color: @darkcolor;
+	box-sizing: border-box;
+	background: #d4dad0+30%;
+}
+
+button, input, textarea, select {
+	border: 1px solid rgba(0,0,0,0.3);
+}
+
+button {
+	cursor: pointer;
+}
+
+.tagsinput {
+	padding: @pad;
+	overflow-y: auto;
+	font-size: 0;
+	padding-bottom: 0;
+}
+
+.tagsinput span.tag,
+.tags > span {
+	border: 1px solid -50%+#b7caaa;
+	border-radius: 3px;
+	display: block;
+	float: left;
+	padding: @pad 1.4*@pad;
+	background: #b7caaa;
+	color: -90%+#b7caaa;
+	margin: 0 @pad @pad 0;
+	font-size: 14px;
+}
+
+.tagsinput span.tag a {
+	display: inline-block;
+	font-weight: bold;
+	color: inherit;
+	text-decoration: none;
+	font-size: 11px;
+	text-align: center;
+	width: 1em;
+	padding-left: @pad;
+}
+
+.tagsinput.selectable {
+	span.tag.active {
+		background: @maincolor;
+		color: white;
+	}
+	span.tag a, input {
+		display: none;
+	}
+}
+
+.tagsinput input {
+	width: 10em;
+	margin: 0;
+	font-size: 14px;
+	border: 1px solid transparent;
+	padding: @pad;
+	margin-right: @pad;
+	margin-bottom: @pad;
+	outline: none;
+	margin-left: -@pad;
+}
+
+.tagsinput div {
+	display: block;
+	float: left;
+}
+
+.tags_clear {
+	clear: both;
+	width: 100%;
+	height: 0px;
+}
+
+.not_valid {
+	background: #FBD8DB !important;
+	color: #90111A !important;
+}
+
+header {
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.65+0,0+100;Neutral+Density */
+	background: -moz-linear-gradient(top,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%);
+	background: -webkit-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+	background: linear-gradient(to bottom,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+	height: 50px;
+	width: 100%;
+	position: absolute;
+	z-index: 3;
+	#back {
+		font-size: 0;
+		background: none;
+		border: 0;
+		position: absolute;
+		top: @pad;
+		left: @pad;
+		#arrow {
+			color: white;
+			font-size: @fontsize*1.2;
+			width: 1em;
+			height: 1em;
+			padding: @pad 0;
+			position: relative;
+			display: block;
+			div {
+				border: 0 solid;
+				position: absolute;
+				top: 50%;
+				left: 0;
+			}
+			.pointer {
+				width: 1/1.7321em;
+				height: 1/1.7321em;
+				border-width: 0.15em 0 0 0.15em;
+				transform-origin: top center;
+				transform: rotate(-45deg) translateY(-50%);
+			}
+			.line {
+				width: 1em;
+				height: 0;
+				border-top: 0.15em solid;
+				transform: translateY(-50%);
+			}
+		}
+	}
+	h1 {
+		margin: 0;
+		font-size: 1em;
+		display: none;
+	}
+}
+
+h2 {
+	opacity: 0.6;
+	font-size: 1.2em;
+	margin: 0;
+	margin-top: @pad;
+	padding: @pad;
+}
+
+button.main {
+	background: @maincolor;
+	color: white;
+	padding: 2*@pad 4*@pad;
+	border: 0;
+	border-radius: 99px;
+	text-transform: uppercase;
+}
+
+.view {
+	transition: all 0.3s ease-in-out;
+	&.hidden {
+		transform: scale(3);
+		opacity: 0;
+		pointer-events: none;
+		position: absolute;
+		z-index: 10;
+	}
+	&.gone {
+		display: none;
+	}
+}
+
+// Welcome app view
+
+#intro {
+	text-align: center;
+	padding: @pad;
+	overflow: hidden;
+	.slidey {
+		width: 200%;
+		transition: all 0.3s ease-in-out;
+		form {
+			width: 50%;
+		}
+		.verify {
+			float: right;
+		}
+		&.second {
+			transform: translateX(-50%);
+		}
+	}
+	form {
+		input, select {
+			padding: 2*@pad;
+			width: 60%;
+			display: block;
+			margin: auto;
+			margin-bottom: @pad;
+		}
+	}
+}
+
+// Main app view
+
+#map {
+	position: relative;
+	font-size: 0;
+	border-bottom: 1px solid;
+	height: 300px;
+	transition: all 0.3s ease-in-out;
+	h2 {
+		position: absolute;
+		top: -999px;
+		left: -999px;
+	}
+	.image {
+		overflow: hidden;
+		height: 100%;
+		width: 100%;
+		display: block;
+		background: white;
+		background-size: cover;
+		background-position: center center;
+	}
+	&.collapsed {
+		height: 100px;
+	}
+	.buttonwrap {
+		text-align: center;
+		position: absolute;
+		bottom: -1.4em;
+		left: 0;
+		right: 0;
+		font-size: @fontsize;
+	}
+	button {
+		position: relative;
+		width: 50%;
+		.badge {
+			position: absolute;
+			background: red;
+			min-width: 1em;
+			height: 1em;
+			line-height: 1em;
+			padding: @pad*0.8;
+			border-radius: 99px;
+			position: absolute;
+			top: -@pad;
+			right: -@pad;
+		}
+	}
+	.open {
+		position: absolute;
+		font-size: @fontsize;
+		top: @pad;
+		right: 0;
+		padding: @pad;
+		text-decoration: none;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: @darkcolor;
+	}
+}
+
+#tags {
+	margin-top: 1em;
+	border-bottom: 1px solid;
+	h2 {
+		font-size: 0;
+	}
+}
+
+#recent {
+	transition: all 0.3s ease-in-out;
+	&.pushedout {
+		transform: translateY(500px);
+		opacity: 0;
+		pointer-events: none;
+		position: absolute;
+	}
+	> a {
+		text-decoration: none;
+		display: block;
+		position: relative;
+		padding: 0 @pad;
+		color: inherit;
+		.tags {
+			margin-right: @pad+@fontsize*2;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			span {
+				background: none;
+				color: inherit;
+				border-color: rgba(0,0,0,0.2);
+			}
+		}
+		.expiration {
+			width: 2em;
+			position: absolute;
+			top: @pad/2;
+			right: @pad;
+			text-align: right;
+		}
+	}
+}
+
+// Loading screen
+
+#loader {
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	background: @maincolor;
+	color: white;
+	z-index: 20;
+	> div {
+		border: 0.5em solid transparent;
+		width: 3em;
+		height: 3em;
+		text-indent: -9999px;
+		border-radius: 999px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		border-top-color: inherit;
+		transform: translate(-50%, -50%);
+	}
+}
