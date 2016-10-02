@@ -23,11 +23,7 @@ var userSchema = new mongoose.Schema({
 	os:	{
 		type: String,
 		required: true
-	},
-    email: {
-        type: String,
-        default: "help@me.com"
-    }
+	}
 });
 
 module.exports = mongoose.model('User', userSchema);
