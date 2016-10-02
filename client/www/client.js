@@ -1,3 +1,5 @@
+$.support.cors = true;
+
 $("#tags input").tagsInput({
 	"defaultText": "Add an interest...",
 	"onChange": function() {
@@ -119,7 +121,7 @@ function viewUpdate() {
 			updateLoc();
 			$("header").addClass("shaded");
 			replaceView("#intro", "#main");
-			FCMPlugin.getToken(
+			/*FCMPlugin.getToken(
 				function(noteid) {
 					$.post(root+"/user/updatetoken", {
 						token: token,
@@ -152,7 +154,7 @@ function viewUpdate() {
 				function(err) {
 					console.log('Error registering onNotification callback: ' + err);
 				}
-			);
+			);*/
 			$("#main button").click(function() {
 				if (true) {
 					$("#map").addClass("collapsed");
@@ -212,45 +214,6 @@ function viewUpdate() {
 				return false;
 			});
 		}
-		/*var push = PushNotification.init({
-			"android": {
-				"senderID": "XXXXXXXX"
-			},
-			"ios": {
-				"sound": true,
-				"vibration": true,
-				"badge": true
-			},
-			"windows": {}
-		});
-
-		push.on('registration', function(data) {
-			console.log('registration event: ' + data.registrationId);
-
-			var oldRegId = localStorage.getItem('registrationId');
-			if (oldRegId !== data.registrationId) {
-				// Save new registration ID
-				localStorage.setItem('registrationId', data.registrationId);
-				// Post registrationId to your app server as the value has changed
-			}
-
-			var parentElement = document.getElementById('registration');
-			var listeningElement = parentElement.querySelector('.waiting');
-			var receivedElement = parentElement.querySelector('.received');
-
-			listeningElement.setAttribute('style', 'display:none;');
-			receivedElement.setAttribute('style', 'display:block;');
-		}).on('error', function(e) {
-			console.log("push error = " + e.message);
-		}).on('notification', function(data) {
-			console.log('notification event');
-			navigator.notification.alert(
-				data.message,		 // message
-				null,				 // callback
-				data.title,		   // title
-				'Ok'				  // buttonName
-			);
-		});*/
 	}
 }
 

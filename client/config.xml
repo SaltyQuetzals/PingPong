@@ -8,7 +8,10 @@
 		PhoneGap Team
 	</author>
 	<plugin name="cordova-plugin-geolocation" />
-	<plugin name="cordova-plugin-fcm" />
+	<!--<plugin name="cordova-plugin-fcm" />-->
 	<content src="index.html" />
+	<platform name="android">
+		<source-file src="google-services.json" target-dir="./" />
+	</platform>
 	<access origin="*" />
 </widget>

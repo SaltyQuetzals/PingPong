@@ -62,6 +62,7 @@ app.listen(3514, function() {
 });
 
 app.get('/', function(req, res) {
+	res.header("Access-Control-Allow-Origin", "*"); // maybe?
     res.json({
         status: "success",
         data: {
