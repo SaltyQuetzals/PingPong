@@ -62,7 +62,9 @@ app.listen(3514, function() {
 });
 
 app.get('/', function(req, res) {
-	res.header("Access-Control-Allow-Origin", "*"); // maybe?
+    res.header('Access-Control-Allow-Origin', '*'); // ???
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.json({
         status: "success",
         data: {
