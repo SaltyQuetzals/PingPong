@@ -255,4 +255,10 @@ function updateLoc() {
 	});
 }
 
+<<<<<<< HEAD
 viewUpdate();
+=======
+replaceMap("40.714728,-73.998672");
+
+viewUpdate();
+>>>>>>> 34865d7bdd776e3aa256e5ce3be2e9bc54ccfd22
