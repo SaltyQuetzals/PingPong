@@ -21,7 +21,7 @@ var Pong = require('./models/pong.js');
 
 animal.useSeparator(" ");
 
-var serverKey = '422920317003';
+var serverKey = 'AIzaSyCvy2ezN-lrEH0qGmDYVeacrxnfJA-H62E';
 var fcm = new FCM(serverKey);
 
 var verifyToken = function(req, res, next) {
@@ -39,6 +39,9 @@ var verifyToken = function(req, res, next) {
             res.json(obj);
         } else if (user == null) {
             obj.data.message = "Invalid token"
+            res.json(obj);
+        } else if (user.verified == false) {
+            obj.data.message = "Account not verified"
             res.json(obj);
         } else {
             req.user = user.toObject();
@@ -254,6 +257,30 @@ app.get('/user', function(req, res) {
     res.json({
         status: "success",
         data: req.user
+    });
+});
+
+app.post('/user/updatetoken', function(req, res) {
+    User.findByIdAndUpdate(req.user._id.toString(), {
+        $set: {
+            noteId: req.user.noteId
+        }
+    }, function(err, doc) {
+        if (err) {
+            res.json({
+                status: "failure",
+                data: {
+                    message: "Unable to update token"
+                }
+            });
+        } else {
+            res.json({
+                status: "success",
+                data: {
+                    message: "Successfully updated token"
+                }
+            });
+        }
     });
 });
 
