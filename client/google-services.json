@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "436380563516",
+    "firebase_url": "https://ping-pong-4b107.firebaseio.com",
+    "project_id": "ping-pong-4b107",
+    "storage_bucket": "ping-pong-4b107.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436380563516:android:c1da7969bdb91e8a",
+        "android_client_info": {
+          "package_name": "com.example.pingpong"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "436380563516-sdqihttgdb4vcpil3j4oucu355n7742s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxubg8L-c1ueoFi9dpfltJgxpwbob74pM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
