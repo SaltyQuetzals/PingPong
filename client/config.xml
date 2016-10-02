@@ -1,12 +1,16 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.phonegap.helloworld" version="1.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
-    <name>PingPongApp</name>
-    <description>
-        A blank PhoneGap app.
-    </description>
-    <author email="support@phonegap.com" href="http://phonegap.com">
-        PhoneGap Team
-    </author>
-    <content src="index.html" />
-    <access origin="*" />
+	<name>Ping Pong</name>
+	<description>
+		A blank PhoneGap app.
+	</description>
+	<author email="support@phonegap.com" href="http://phonegap.com">
+		PhoneGap Team
+	</author>
+	<plugin name="cordova-plugin-geolocation" />
+	<plugin name="phonegap-plugin-push" spec="1.6.0">
+		<param name="SENDER_ID" value="422920317003" />
+	</plugin>
+	<content src="index.html" />
+	<access origin="*" />
 </widget>
